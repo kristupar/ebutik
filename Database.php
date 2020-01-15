@@ -122,5 +122,17 @@ class Database
         return $this->connection->insert_id;
     }
 
+    public function vratiNarudzbineZaKorisnika($id)
+    {
+        $upit = "SELECT * FROM narudzbina WHERE korisnikID = ". $id;
+        $rez = $this->connection->query($upit);
+        $niz = [];
+        while ($r = $rez->fetch_object()){
+            $niz[] = $r;
+        }
+
+        return $niz;
+    }
+
 
 }
