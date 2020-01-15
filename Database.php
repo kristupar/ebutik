@@ -174,4 +174,22 @@ class Database
         return $niz;
     }
 
+    public function promeniStatus($id, $status)
+    {
+        $upit = "UPDATE narudzbina set status = '".$status."' WHERE narudzbinaID=".$id;
+        return $this->connection->query($upit);
+    }
+
+    public function podaciZaGrafik()
+    {
+        $upit = "SELECT o.nazivModela,sum(n.kolicina) as brojKupovina FROM stavkanarudzbine n join odeca o on n.odecaID = o.odecaID GROUP BY n.odecaID  ";
+        $rez = $this->connection->query($upit);
+        $niz = [];
+        while ($r = $rez->fetch_object()){
+            $niz[] = $r;
+        }
+
+        return $niz;
+    }
+
 }

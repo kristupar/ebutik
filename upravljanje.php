@@ -57,10 +57,142 @@ $kolekcije = $db->select('kolekcija');
                         <input type="submit" value="Unesi odecu" class="btn-primary btn btn-lg">
                     </form>
                 </div>
+                <div class="container">
+                    <h2 id="odgovor"></h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table" id="narudzbine">
+                                <thead>
+                                <tr>
+                                    <th class="text-center">ID</th>
+                                    <th class="text-center">Ukupna cena</th>
+                                    <th class="text-center">Datum</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Potvrdi narudzbinu</th>
+                                    <th class="text-center">Ponisti narudzbinu</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <?php
+
+                                $ch = curl_init();
+                                curl_setopt($ch, CURLOPT_URL, 'http://localhost/ebutik/api/narudzbineSaStatusomObrade');
+                                curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+                                $rez = curl_exec($ch);
+
+                                $narudzbine = json_decode($rez);
+                                curl_close($ch);
+
+                                foreach ($narudzbine as $nar) {
+
+                                    ?>
+                                    <tr>
+                                        <td><?php echo $nar->narudzbinaID ?></td>
+                                        <td><?php echo $nar->ukupanIznos ?> dinara</td>
+                                        <td><?php echo $nar->datum ?></td>
+                                        <td><?php echo $nar->status ?></td>
+                                        <td><button class="btn btn-primary" onclick="promeniStatus(<?php echo $nar->narudzbinaID ?>,'Potvrdjeno')">Potvrdi</button> </td>
+                                        <td><button class="btn btn-danger" onclick="promeniStatus(<?php echo $nar->narudzbinaID ?>,'Odbijeno')">Ponisti</button> </td>
+                                    </tr>
+                                    <?php
+                                }
+                                ?>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <div id="piechart_3d" style="width: 500px; height: 400px;"></div>                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table" id="korisnici">
+                            <thead>
+                            <tr>
+                                <th class="text-center">ID</th>
+                                <th class="text-center">Ime i prezime</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php
+
+                            $ch = curl_init();
+                            curl_setopt($ch, CURLOPT_URL, 'http://localhost/ebutik/api/korisnici');
+                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+                            $rez = curl_exec($ch);
+
+                            $korisnici = json_decode($rez);
+                            curl_close($ch);
+
+                            foreach ($korisnici as $kor) {
+
+                                ?>
+                                <tr>
+                                    <td><?php echo $kor->korisnikid ?></td>
+                                    <td><?php echo $kor->imeIPrezimeKorisnika ?></td>
+                                </tr>
+                                <?php
+                            }
+                            ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="container" id="slikice">
+
+                </div>
             </div>
         </div>
 
 <?php include "footer.php";?>
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript">
+            google.charts.load("current", {packages:["corechart"]});
+            google.charts.setOnLoadCallback(drawChart);
+            function drawChart() {
+                let nizPodataka = [];
+                let header = ['Odeca', 'Broj kupovina'];
+                nizPodataka.push(header);
 
+                $.ajax({
+                    url: 'podaciGrafik.php',
+                    success: function (podaci) {
+                        let niz = JSON.parse(podaci);
+                        $.each(niz, function (i,element) {
+                            let n = [element.nazivModela,parseInt(element.brojKupovina)]
+                            nizPodataka.push(n);
+                        });
+                        var data = google.visualization.arrayToDataTable(nizPodataka);
+                        var options = {
+                            title: 'Broj kupovina po odeci',
+                            is3D: true,
+                        };
+
+                        var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+                        chart.draw(data, options);
+                    }
+                });
+            }
+        </script>
+        <script>
+            function promeniStatus(id,status) {
+                $.ajax({
+                    url: 'promeniStatusNarudzbine.php?status='+status+"&id="+id,
+                    success: function (odgovor) {
+                        $("#odgovor").html(odgovor);
+                    }
+                })
+            }
+        </script>
+<script>
+    $.ajax({
+        url: 'slikeSaJavnogVebServisa.php',
+        success: function (slike) {
+            $("#slikice").html(slike);
+        }
+    })
+</script>
 </body>
 </html>
