@@ -101,7 +101,7 @@ class Database
             return $r;
         }
 
-        return $upit;
+        return null;
     }
 
     public function vratiOdecuSortirano(array $sortiranje, $min, $max)

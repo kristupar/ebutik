@@ -167,7 +167,7 @@ $kolekcije = $db->select('kolekcija');
                         var data = google.visualization.arrayToDataTable(nizPodataka);
                         var options = {
                             title: 'Broj kupovina po odeci',
-                            is3D: true,
+                            is3D: true
                         };
 
                         var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));

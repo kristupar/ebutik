@@ -13,5 +13,5 @@ if($korisnik){
     $_SESSION['imePrezimeKorisnika'] = $korisnik->imeIPrezimeKorisnika;
     header("Location: prodavnica.php");
 }else{
-    header("Location: login.php?error=Doslo je do greske. Proverite da li je uneta ispravna lozinka i korisnicko ime");
+    header("Location: logovanje.php?error=Doslo je do greske. Proverite da li je uneta ispravna lozinka i korisnicko ime");
 }
