@@ -31,6 +31,7 @@ include "inicijalizacija.php";
                         <tr>
                             <th class="text-center">ID</th>
                             <th class="text-center">Ukupna cena</th>
+                            <th class="text-center">Datum</th>
                             <th class="text-center">Status</th>
                         </tr>
                         </thead>
@@ -45,6 +46,7 @@ include "inicijalizacija.php";
                             <tr>
                                 <td><?php echo $nar->narudzbinaID ?></td>
                                 <td><?php echo $nar->ukupanIznos ?> dinara</td>
+                                <td><?php echo $nar->datum ?></td>
                                 <td><?php echo $nar->status ?></td>
                             </tr>
                         <?php

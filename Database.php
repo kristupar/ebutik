@@ -6,11 +6,15 @@ class Database
 
     /**
      * Database constructor.
-     * @param $connection
      */
-    public function __construct($connection)
+    public function __construct()
     {
-        $this->connection = $connection;
+        $this->connection = new Mysqli('localhost','root','','ebutik');
+        $this->connection->set_charset("utf8");
+
+        if($this->connection->connect_errno) {
+            die('Neuspela konekcija na bazu!');
+        }
     }
 
     public function select($imeTabele)
@@ -134,5 +138,40 @@ class Database
         return $niz;
     }
 
+    public function vratiKorisnike()
+    {
+        $upit = "SELECT imeIPrezimeKorisnika,korisnikid,ulogaUSistemu FROM korisnik";
+        $rez = $this->connection->query($upit);
+        $niz = [];
+        while ($r = $rez->fetch_object()){
+            $niz[] = $r;
+        }
+
+        return $niz;
+    }
+
+    public function vratiNarudzbineSaStatusomObrada()
+    {
+        $upit = "SELECT * FROM narudzbina WHERE status ='U procesu obrade' ";
+        $rez = $this->connection->query($upit);
+        $niz = [];
+        while ($r = $rez->fetch_object()){
+            $niz[] = $r;
+        }
+
+        return $niz;
+    }
+
+    public function vratiStavkeZaNarudzbinu($id)
+    {
+        $upit = "SELECT * FROM odeca o join kolekcija k on o.kolekcijaID = k.kolekcijaID join stavkanarudzbine sn on sn.odecaID=o.odecaID WHERE sn.narudzbinaID =   ". $id;
+        $rez = $this->connection->query($upit);
+        $niz = [];
+        while ($r = $rez->fetch_object()){
+            $niz[] = $r;
+        }
+
+        return $niz;
+    }
 
 }
